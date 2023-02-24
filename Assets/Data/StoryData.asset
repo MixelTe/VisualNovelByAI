@@ -12,44 +12,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a6c521dd892054abac309e9f64cf7b, type: 3}
   m_Name: StoryData
   m_EditorClassIdentifier: 
+  characters:
+  - Name: Lili
+    Portrait: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
+  - Name: Creeper
+    Portrait: {fileID: 21300000, guid: ccaa1bf19a3e0d646a35de52e9cef32c, type: 3}
+  backgroundImages:
+  - Name: Night
+    Image: {fileID: 21300000, guid: 14ee11d3d83b1d6409d3bcf7d2d87a59, type: 3}
+  - Name: Sunrise
+    Image: {fileID: 21300000, guid: 2d74e1957a306d149b772aa3086ef21c, type: 3}
   dialogues:
-  - characterName: Lily
-    characterImage: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
-    text: Hi!
-    choices: []
-  - characterName: Creeper
-    characterImage: {fileID: 21300000, guid: ccaa1bf19a3e0d646a35de52e9cef32c, type: 3}
-    text: Hello! What do you like?
-    choices:
-    - text: Cake
-      nextDialogueIndex: 2
-    - text: Boom!
-      nextDialogueIndex: 3
-    - text: Pizza
-      nextDialogueIndex: 4
-  - characterName: Lily
-    characterImage: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
-    text: I like cake!
-    choices:
+  - id: 0
+    CharacterName: Lili
+    Text: Hi!
+    BackgroundImage: Sunrise
+    Choices:
     - text: Continue
-      nextDialogueIndex: 5
-  - characterName: Lily
-    characterImage: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
-    text: I want you to boom!
-    choices:
+      nextDialogueId: 1
+  - id: 1
+    CharacterName: Creeper
+    Text: Hello!
+    BackgroundImage: 
+    Choices:
+    - text: Return to start
+      nextDialogueId: 0
     - text: Continue
-      nextDialogueIndex: 5
-  - characterName: Lily
-    characterImage: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
-    text: Do you have pizza?
-    choices:
+      nextDialogueId: 2
+  - id: 2
+    CharacterName: Lili
+    Text: Bye
+    BackgroundImage: Night
+    Choices:
     - text: Continue
-      nextDialogueIndex: 5
-  - characterName: Creeper
-    characterImage: {fileID: 21300000, guid: ccaa1bf19a3e0d646a35de52e9cef32c, type: 3}
-    text: Yea! Boom!
-    choices: []
-  - characterName: Lily
-    characterImage: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
-    text: Bye!
-    choices: []
+      nextDialogueId: 3
+  - id: 3
+    CharacterName: Creeper
+    Text: Boom!
+    BackgroundImage: 
+    Choices: []
