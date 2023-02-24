@@ -28,24 +28,26 @@ MonoBehaviour:
     Text: Hi!
     BackgroundImage: Sunrise
     Choices:
-    - text: Continue
-      nextDialogueId: 1
+    - Text: Continue
+      NextDialogueId: 1
   - id: 1
     CharacterName: Creeper
     Text: Hello!
     BackgroundImage: 
     Choices:
-    - text: Return to start
-      nextDialogueId: 0
-    - text: Continue
-      nextDialogueId: 2
+    - Text: Return to Start
+      NextDialogueId: 0
+    - Text: Continue
+      NextDialogueId: 2
+    - Text: Ye!
+      NextDialogueId: 3
   - id: 2
     CharacterName: Lili
     Text: Bye
     BackgroundImage: Night
     Choices:
-    - text: Continue
-      nextDialogueId: 3
+    - Text: Continue
+      NextDialogueId: 3
   - id: 3
     CharacterName: Creeper
     Text: Boom!
