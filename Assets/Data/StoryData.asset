@@ -15,8 +15,14 @@ MonoBehaviour:
   characters:
   - Name: Lili
     Portrait: {fileID: 21300000, guid: 7c8c05e624c9cdf43916a0cad77d9842, type: 3}
+    PortraitHappy: {fileID: 0}
+    PortraitSad: {fileID: 0}
+    PortraitAngry: {fileID: 0}
   - Name: Creeper
     Portrait: {fileID: 21300000, guid: ccaa1bf19a3e0d646a35de52e9cef32c, type: 3}
+    PortraitHappy: {fileID: 0}
+    PortraitSad: {fileID: 21300000, guid: 84bd214a320718c459555a74034a360a, type: 3}
+    PortraitAngry: {fileID: 21300000, guid: a66a4902224d8e24fa02810bcf103886, type: 3}
   backgroundImages:
   - Name: Night
     Image: {fileID: 21300000, guid: 14ee11d3d83b1d6409d3bcf7d2d87a59, type: 3}
@@ -24,16 +30,18 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 2d74e1957a306d149b772aa3086ef21c, type: 3}
   dialogues:
   - id: 0
-    CharacterName: Lili
+    Character: Lili
+    CharacterEmotion: 0
     Text: Hi!
-    BackgroundImage: Sunrise
+    BackgroundImage: Night
     Choices:
     - Text: Continue
       NextDialogueId: 1
   - id: 1
-    CharacterName: Creeper
+    Character: Creeper
+    CharacterEmotion: 1
     Text: Hello!
-    BackgroundImage: 
+    BackgroundImage: Sunrise
     Choices:
     - Text: Return to Start
       NextDialogueId: 0
@@ -42,14 +50,16 @@ MonoBehaviour:
     - Text: Ye!
       NextDialogueId: 3
   - id: 2
-    CharacterName: Lili
+    Character: Lili
+    CharacterEmotion: 0
     Text: Bye
     BackgroundImage: Night
     Choices:
     - Text: Continue
       NextDialogueId: 3
   - id: 3
-    CharacterName: Creeper
+    Character: Creeper
+    CharacterEmotion: 1
     Text: Boom!
-    BackgroundImage: 
+    BackgroundImage: Sunrise
     Choices: []
