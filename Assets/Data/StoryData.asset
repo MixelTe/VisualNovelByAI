@@ -33,7 +33,7 @@ MonoBehaviour:
     Character: Lili
     CharacterEmotion: 0
     Text: Hi!
-    BackgroundImage: Night
+    Background: Night
     Choices:
     - Text: Continue
       NextDialogueId: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
     Character: Creeper
     CharacterEmotion: 1
     Text: Hello!
-    BackgroundImage: Sunrise
+    Background: <same>
     Choices:
     - Text: Return to Start
       NextDialogueId: 0
@@ -53,7 +53,7 @@ MonoBehaviour:
     Character: Lili
     CharacterEmotion: 0
     Text: Bye
-    BackgroundImage: Night
+    Background: Sunrise
     Choices:
     - Text: Continue
       NextDialogueId: 3
@@ -61,5 +61,5 @@ MonoBehaviour:
     Character: Creeper
     CharacterEmotion: 1
     Text: Boom!
-    BackgroundImage: Sunrise
+    Background: Sunrise
     Choices: []
