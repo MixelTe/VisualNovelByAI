@@ -19,12 +19,16 @@ public class Character
 {
     public string Name;
     public Sprite Portrait;
+    public Sprite PortraitHappy;
+    public Sprite PortraitSad;
+    public Sprite PortraitAngry;
 }
 
 
 [System.Serializable]
 public class BackgroundImage
 {
+    public static readonly string Same = "<same>";
     public string Name;
     public Sprite Image;
 }

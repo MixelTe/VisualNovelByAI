@@ -884,12 +884,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bea50406591a1aa4aac2cb28c0a25436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  storyData: {fileID: 11400000, guid: ef55e6900d714e64e85fbb106c7de1c3, type: 2}
-  characterNameText: {fileID: 1731363179}
-  characterImage: {fileID: 1160353375}
-  dialogueText: {fileID: 701868837}
-  choiceButtonPrefab: {fileID: 9006947411569788764, guid: f438851adde633f40b57bb4c1c9713b4, type: 3}
-  choiceButtonContainer: {fileID: 1927627138}
+  _storyData: {fileID: 11400000, guid: ef55e6900d714e64e85fbb106c7de1c3, type: 2}
+  _characterNameText: {fileID: 1731363179}
+  _characterImage: {fileID: 1160353375}
+  _backgroundImage: {fileID: 1949414301}
+  _dialogueText: {fileID: 701868837}
+  _choiceButtonPrefab: {fileID: 9006947411569788764, guid: f438851adde633f40b57bb4c1c9713b4, type: 3}
+  _choiceButtonContainer: {fileID: 1927627138}
 --- !u!4 &1859886348
 Transform:
   m_ObjectHideFlags: 0
@@ -1098,8 +1099,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 202.5, y: 0}
-  m_SizeDelta: {x: 373, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2013355689
 MonoBehaviour:
