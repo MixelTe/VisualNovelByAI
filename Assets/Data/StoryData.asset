@@ -30,6 +30,7 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 2d74e1957a306d149b772aa3086ef21c, type: 3}
   dialogues:
   - id: 0
+    PosInEditor: {x: -594, y: -57}
     Character: Lili
     CharacterEmotion: 0
     Text: Hi!
@@ -38,6 +39,7 @@ MonoBehaviour:
     - Text: Continue
       NextDialogueId: 1
   - id: 1
+    PosInEditor: {x: -241, y: -88}
     Character: Creeper
     CharacterEmotion: 1
     Text: Hello!
@@ -50,6 +52,7 @@ MonoBehaviour:
     - Text: Ye!
       NextDialogueId: 3
   - id: 2
+    PosInEditor: {x: 178, y: -82}
     Character: Lili
     CharacterEmotion: 0
     Text: Bye
@@ -58,6 +61,7 @@ MonoBehaviour:
     - Text: Continue
       NextDialogueId: 3
   - id: 3
+    PosInEditor: {x: 470, y: 208}
     Character: Creeper
     CharacterEmotion: 1
     Text: Boom!

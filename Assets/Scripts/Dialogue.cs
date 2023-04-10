@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 public class Dialogue
 {
     public int id = 0;
-    [FormerlySerializedAs("CharacterName")]
+    public Vector2 PosInEditor;
     public string Character = "";
     public Emotions CharacterEmotion = Emotions.Normal;
     public string Text = "";
