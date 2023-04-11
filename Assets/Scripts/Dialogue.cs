@@ -8,11 +8,20 @@ public class Dialogue
 {
     public int id = 0;
     public Vector2 PosInEditor;
+    public DialogueType Type = DialogueType.Dialogue;
+    // Dialogue
     public string Character = "";
     public Emotions CharacterEmotion = Emotions.Normal;
     public string Text = "";
     public string Background = BackgroundImage.Same;
     public List<Choice> Choices = new();
+    // Setter
+    public string Field = "";
+    public int Value = 0;
+    public bool SetOrChange = true;
+    // Switch
+    // public string Field = "";
+    // public List<Choice> Choices = new();
 
     public Dialogue Clone()
 	{
@@ -20,11 +29,15 @@ public class Dialogue
         {
             id = id,
             PosInEditor = PosInEditor,
+            Type = Type,
             Character = Character,
             CharacterEmotion = CharacterEmotion,
             Text = Text,
             Background = Background,
             Choices = Choices.Select(ch => ch.Clone()).ToList(),
+            Field = Field,
+            Value = Value,
+            SetOrChange = SetOrChange,
         };
 	}
 }
@@ -53,4 +66,11 @@ public enum Emotions
     Happy,
     Sad,
     Angry,
+}
+
+public enum DialogueType
+{
+    Dialogue,
+    Setter,
+    Switch,
 }

@@ -15,6 +15,7 @@ public class StoryEditor : EditorWindow
     public string[] Characters = null;
     public string[] Backgrounds = null;
     public string[] Emotions = Enum.GetNames(typeof(Emotions));
+    public string[] Types = Enum.GetNames(typeof(DialogueType));
     public Vector2 Offset { get => _offset; }
 
     private Vector2 _drag = Vector2.zero;
@@ -282,9 +283,23 @@ public class StoryEditor : EditorWindow
                 }
             }
 
+
             GUILayout.BeginVertical();
 
-            EditorGUILayout.LabelField($"ID: {Dialog.id}", GUILayout.Height(lineHeight));
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField($"ID: {Dialog.id}", new GUILayoutOption[]
+			{
+                GUILayout.Height(lineHeight),
+                GUILayout.Width(40 * _storyEditor.Zoom)
+            });
+            EditorGUIUtility.labelWidth = 36 * _storyEditor.Zoom;
+            
+            GUILayout.BeginHorizontal(GUILayout.Width((_width - 35 - 40 - 20) * _storyEditor.Zoom));
+            var type = EditorGUILayout.Popup("Type", Array.IndexOf(_storyEditor.Types, Enum.GetName(typeof(DialogueType), Dialog.Type)), _storyEditor.Types, GUILayout.Height(lineHeight));
+            Dialog.Type = Enum.Parse<DialogueType>(_storyEditor.Types[type]);
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndHorizontal();
             EditorGUIUtility.labelWidth = 80 * _storyEditor.Zoom;
 
             var character = EditorGUILayout.Popup("Character", Array.IndexOf(_storyEditor.Characters, Dialog.Character), _storyEditor.Characters, GUILayout.Height(lineHeight));
