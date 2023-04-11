@@ -12,6 +12,8 @@ public class DialogueManagerEditor : Editor
 
         if (myScript.StoryData == null) return;
 
+        GUILayout.Space(16);
+
         GUI.enabled = !Application.isPlaying;
         myScript.UseStateDEV = EditorGUILayout.Toggle("Use State DEV", myScript.UseStateDEV);
         GUI.enabled = true;
@@ -27,7 +29,7 @@ public class DialogueManagerEditor : Editor
             }
         }
 
-        for (int i = 0; i < myScript.StateDEV_values.Length; i++)
+        for (int i = 0; i < myScript.StateDEV_values.Length && i < myScript.StoryData.Fields.Count; i++)
         {
             DrawListItem(myScript, i);
 		}
