@@ -20,7 +20,6 @@ public class Dialogue
     public int Value = 0;
     public bool SetOrChange = true;
     // Switch
-    // public string Field = "";
     // public List<Choice> Choices = new();
 
     public Dialogue Clone()
@@ -46,6 +45,7 @@ public class Dialogue
 [System.Serializable]
 public class Choice
 {
+    public static readonly string[] Operators = new string[] { ">", "<", "==", "Any" };
     public string Text;
     public int NextDialogueId;
 

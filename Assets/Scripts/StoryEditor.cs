@@ -132,7 +132,10 @@ public class StoryEditor : EditorWindow
 
         if (Event.current.type == EventType.MouseDown)
 		{
-            _drag = Event.current.mousePosition - _offset;
+            if (Event.current.button != 0)
+			{
+                _drag = Event.current.mousePosition - _offset;
+			}
         }
         else if (Event.current.type == EventType.MouseDrag)
         {
@@ -145,7 +148,7 @@ public class StoryEditor : EditorWindow
         else if (Event.current.type == EventType.MouseUp)
         {
             _drag = Vector2.zero;
-            if (_creatingConnection)
+            if (_creatingConnection && Event.current.button == 0)
 			{
                 _creatingConnection = false;
                 var node = AddNode(Event.current.mousePosition - _offset);
@@ -159,7 +162,7 @@ public class StoryEditor : EditorWindow
         var newDialog = new Dialogue()
         {
             PosInEditor = new Vector2(
-                dialogNode.Rect.xMax + 8, 
+                dialogNode.Position.x + DialogNode.Width + 24, 
                 dialogNode.Position.y + (dialogNode.OptionHeight + dialogNode.Height - 60) * dialogNode.Next.Count),
             id = ++_maxIndex
         };
@@ -224,13 +227,16 @@ public class StoryEditor : EditorWindow
 
     private class DialogNode
 	{
-        private static readonly int _width = 250;
+        public static readonly int Width = 250;
         private static readonly int _heightDialogue = 210;
         private static readonly int _heightSetter = 120;
-        private static readonly int _heightSwitch = 210;
+        private static readonly int _heightSwitch = 90;
+        private static readonly int _heightOptionDialogue = 52;
+        private static readonly int _heightOptionSetter = 30;
+        private static readonly int _heightOptionSwitch = 90;
         private static readonly int _connectionTop = 32;
         private static readonly int _fontSize = 12;
-        public int OptionHeight { get => Dialog.Type == DialogueType.Setter ? 30 : 52; }
+        public int OptionHeight { get => Dialog.Type == DialogueType.Dialogue ? _heightOptionDialogue : Dialog.Type == DialogueType.Setter ? _heightOptionSetter : _heightOptionSwitch; }
         public int Height { get => Dialog.Type == DialogueType.Dialogue ? _heightDialogue : Dialog.Type == DialogueType.Setter ? _heightSetter : _heightSwitch; }
         private float _height { get => Height - (_storyEditor._zoom > 1 ? Height * 0f : Height * 0.4f) * (_storyEditor._zoom - 1); }
         private float _optionHeight { get => OptionHeight - (_storyEditor._zoom > 1 ? OptionHeight * 0.02f : OptionHeight * 0.05f) * (_storyEditor._zoom - 1); }
@@ -247,7 +253,7 @@ public class StoryEditor : EditorWindow
         private Vector2 _drag;
         private Vector2 _pastPos;
 
-        public Rect Rect => new Rect(Position.x, Position.y, _width, _height + _optionHeight * Dialog.Choices.Count).Mul(_storyEditor._zoom);
+        public Rect Rect => new Rect(Position.x, Position.y, Width, _height + _optionHeight * Dialog.Choices.Count).Mul(_storyEditor._zoom);
 
         public DialogNode(Dialogue dialog, StoryEditor storyEditor)
 		{
@@ -322,7 +328,7 @@ public class StoryEditor : EditorWindow
             GUILayout.BeginArea(new Rect(Rect.position + offset, Rect.size), _nodeStyle);
             if (Dialog.id != 0)
 			{
-                if (GUI.Button(new Rect(new Vector2(_width - 32, 10) * _storyEditor._zoom, new Vector2(18, 18) * _storyEditor._zoom), "x", _button))
+                if (GUI.Button(new Rect(new Vector2(Width - 32, 10) * _storyEditor._zoom, new Vector2(18, 18) * _storyEditor._zoom), "x", _button))
                 {
                     if (EditorUtility.DisplayDialog("Delete Dialog Node", "Are you sure?", "Delete", "Cancel"))
                     {
@@ -342,7 +348,7 @@ public class StoryEditor : EditorWindow
             });
             EditorGUIUtility.labelWidth = 36 * _storyEditor._zoom;
             
-            GUILayout.BeginHorizontal(GUILayout.Width((_width - 35 - 40 - 20) * _storyEditor._zoom));
+            GUILayout.BeginHorizontal(GUILayout.Width((Width - 35 - 40 - 20) * _storyEditor._zoom));
             Dialog.Type = (DialogueType)EditorGUILayout.EnumPopup("Type", Dialog.Type, GUILayout.Height(lineHeight));
             GUILayout.EndHorizontal();
 
@@ -356,14 +362,6 @@ public class StoryEditor : EditorWindow
             else if (Dialog.Type == DialogueType.Switch)
                 DrawSwitch(lineHeight);
 
-            if (Dialog.Type != DialogueType.Setter)
-			{
-                for (int i = 0; i < Dialog.Choices.Count; i++)
-			    {
-                    var choice = Dialog.Choices[i];
-                    choice.Text = EditorGUILayout.TextArea(choice.Text, _textArea, GUILayout.Height(50 * _storyEditor._zoom));
-                }
-			}
             GUILayout.EndVertical();
             GUILayout.EndArea();
 
@@ -381,6 +379,7 @@ public class StoryEditor : EditorWindow
 
             if (Event.current.type == EventType.MouseDown)
             {
+                if (Event.current.button != 0) return false;
                 var cursor = Event.current.mousePosition - _storyEditor.Offset;
                 if (!Contains(cursor)) return false;
                 _drag = cursor;
@@ -422,6 +421,12 @@ public class StoryEditor : EditorWindow
             {
                 _storyEditor.AddChoice(this);
             }
+
+            for (int i = 0; i < Dialog.Choices.Count; i++)
+            {
+                var choice = Dialog.Choices[i];
+                choice.Text = EditorGUILayout.TextArea(choice.Text, _textArea, GUILayout.Height(50 * _storyEditor._zoom));
+            }
         }
         
         public void DrawSetter(float lineHeight)
@@ -430,7 +435,7 @@ public class StoryEditor : EditorWindow
             field = Mathf.Clamp(field, 0, _storyEditor.Field.Length);
             Dialog.Field = _storyEditor.Field[field];
             Dialog.Value = EditorGUILayout.IntField("Value", Dialog.Value, GUILayout.Height(lineHeight));
-            EditorGUIUtility.labelWidth = _width * _storyEditor._zoom - 48;
+            EditorGUIUtility.labelWidth = Width * _storyEditor._zoom - 48;
             Dialog.SetOrChange = EditorGUILayout.Toggle("Set this value (add otherwise)", Dialog.SetOrChange, GUILayout.Height(lineHeight));
 
             if (Next.Count == 0)
@@ -439,7 +444,37 @@ public class StoryEditor : EditorWindow
 
         public void DrawSwitch(float lineHeight)
         {
+            if (GUILayout.Button("Add", _button))
+            {
+                _storyEditor.AddChoice(this);
+            }
 
+            for (int i = 0; i < Dialog.Choices.Count; i++)
+            {
+                var choice = Dialog.Choices[i];
+                var splited = choice.Text.Split(";");
+                var field = splited[0];
+                var oper = Choice.Operators[0];
+                var value = 0;
+                if (splited.Length > 1)
+					oper = splited[1];
+                if (splited.Length > 2)
+                    int.TryParse(splited[2], out value);
+
+                GUILayout.BeginVertical(_nodeStyle, GUILayout.Height(_optionHeight * _storyEditor._zoom));
+                var fieldNew = EditorGUILayout.Popup(Array.IndexOf(_storyEditor.Field, field), _storyEditor.Field, GUILayout.Height(lineHeight));
+                var operNew = EditorGUILayout.Popup(Array.IndexOf(Choice.Operators, oper), Choice.Operators, GUILayout.Height(lineHeight));
+                var valueNew = value;
+                if (operNew != 3)
+				{
+                    valueNew = EditorGUILayout.IntField(value, GUILayout.Height(lineHeight));
+				}
+                GUILayout.EndVertical();
+                fieldNew = Mathf.Clamp(fieldNew, 0, _storyEditor.Field.Length);
+                operNew = Mathf.Clamp(operNew, 0, Choice.Operators.Length);
+
+                choice.Text = $"{_storyEditor.Field[fieldNew]};{Choice.Operators[operNew]};{valueNew}";
+            }
         }
 
         public void DrawConnections(Vector2 offset)

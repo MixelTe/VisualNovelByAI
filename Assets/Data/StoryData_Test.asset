@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63a6c521dd892054abac309e9f64cf7b, type: 3}
-  m_Name: StoryData
+  m_Name: StoryData_Test
   m_EditorClassIdentifier: 
   characters:
   - Name: Lili
@@ -75,7 +75,7 @@ MonoBehaviour:
     Value: 0
     SetOrChange: 1
   - id: 3
-    PosInEditor: {x: 715, y: 118}
+    PosInEditor: {x: 780, y: 28}
     Type: 0
     Character: Creeper
     CharacterEmotion: 1
@@ -116,7 +116,7 @@ MonoBehaviour:
     Value: 0
     SetOrChange: 1
   - id: 6
-    PosInEditor: {x: 465, y: 362}
+    PosInEditor: {x: 458, y: 354}
     Type: 1
     Character: 
     CharacterEmotion: 0
@@ -148,7 +148,52 @@ MonoBehaviour:
     CharacterEmotion: 0
     Text: 
     Background: <same>
-    Choices: []
+    Choices:
+    - Text: hapiness;>;10
+      NextDialogueId: 9
+    - Text: hapiness;<;10
+      NextDialogueId: 10
+    - Text: hapiness;Any;0
+      NextDialogueId: 11
+    Field: 
+    Value: 0
+    SetOrChange: 1
+  - id: 9
+    PosInEditor: {x: 1100, y: 380}
+    Type: 0
+    Character: 
+    CharacterEmotion: 0
+    Text: hapiness > 10
+    Background: <same>
+    Choices:
+    - Text: Continue
+      NextDialogueId: 3
+    Field: 
+    Value: 0
+    SetOrChange: 1
+  - id: 10
+    PosInEditor: {x: 1098, y: 670}
+    Type: 0
+    Character: 
+    CharacterEmotion: 0
+    Text: hapiness < 10
+    Background: <same>
+    Choices:
+    - Text: Continue
+      NextDialogueId: 3
+    Field: 
+    Value: 0
+    SetOrChange: 1
+  - id: 11
+    PosInEditor: {x: 1101, y: 965}
+    Type: 0
+    Character: 
+    CharacterEmotion: 0
+    Text: hapiness - Any
+    Background: <same>
+    Choices:
+    - Text: Continue
+      NextDialogueId: 3
     Field: 
     Value: 0
     SetOrChange: 1
