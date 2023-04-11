@@ -95,7 +95,7 @@ MonoBehaviour:
     Choices:
     - Text: Continue
       NextDialogueId: 5
-    Field: 
+    Field: hapiness
     Value: 10
     SetOrChange: 1
   - id: 5
@@ -161,7 +161,7 @@ MonoBehaviour:
   - id: 9
     PosInEditor: {x: 1100, y: 380}
     Type: 0
-    Character: 
+    Character: Creeper
     CharacterEmotion: 0
     Text: hapiness > 10
     Background: <same>
@@ -174,7 +174,7 @@ MonoBehaviour:
   - id: 10
     PosInEditor: {x: 1098, y: 670}
     Type: 0
-    Character: 
+    Character: Creeper
     CharacterEmotion: 0
     Text: hapiness < 10
     Background: <same>
@@ -187,7 +187,7 @@ MonoBehaviour:
   - id: 11
     PosInEditor: {x: 1101, y: 965}
     Type: 0
-    Character: 
+    Character: Creeper
     CharacterEmotion: 0
     Text: hapiness - Any
     Background: <same>
