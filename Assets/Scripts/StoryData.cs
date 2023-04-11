@@ -7,11 +7,13 @@ public class StoryData : ScriptableObject
 {
     [SerializeField] private List<Character> characters;
     [SerializeField] private List<BackgroundImage> backgroundImages;
+    [SerializeField] private List<string> fields;
     [FormerlySerializedAs("dialogues")]
     public List<Dialogue> Dialogues;
 
     public List<Character> Characters => characters;
     public List<BackgroundImage> BackgroundImages => backgroundImages;
+    public List<string> Fields => fields;
 }
 
 

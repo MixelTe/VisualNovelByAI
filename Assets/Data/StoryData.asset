@@ -28,9 +28,12 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 14ee11d3d83b1d6409d3bcf7d2d87a59, type: 3}
   - Name: Sunrise
     Image: {fileID: 21300000, guid: 2d74e1957a306d149b772aa3086ef21c, type: 3}
+  fields:
+  - hapiness
   Dialogues:
   - id: 0
     PosInEditor: {x: -594, y: -57}
+    Type: 0
     Character: Lili
     CharacterEmotion: 0
     Text: Hi!
@@ -38,8 +41,12 @@ MonoBehaviour:
     Choices:
     - Text: Continue
       NextDialogueId: 1
+    Field: 
+    Value: 0
+    SetOrChange: 1
   - id: 1
     PosInEditor: {x: -241, y: -88}
+    Type: 0
     Character: Creeper
     CharacterEmotion: 1
     Text: Hello!
@@ -49,10 +56,14 @@ MonoBehaviour:
       NextDialogueId: 0
     - Text: Continue
       NextDialogueId: 2
-    - Text: Ye!
-      NextDialogueId: 3
+    - Text: Ya!
+      NextDialogueId: 4
+    Field: 
+    Value: 0
+    SetOrChange: 1
   - id: 2
     PosInEditor: {x: 178, y: -82}
+    Type: 0
     Character: Lili
     CharacterEmotion: 0
     Text: Bye
@@ -60,10 +71,84 @@ MonoBehaviour:
     Choices:
     - Text: Continue
       NextDialogueId: 3
+    Field: 
+    Value: 0
+    SetOrChange: 1
   - id: 3
-    PosInEditor: {x: 470, y: 208}
+    PosInEditor: {x: 715, y: 118}
+    Type: 0
     Character: Creeper
     CharacterEmotion: 1
     Text: Boom!
     Background: Sunrise
     Choices: []
+    Field: 
+    Value: 0
+    SetOrChange: 1
+  - id: 4
+    PosInEditor: {x: -141, y: 301}
+    Type: 1
+    Character: 
+    CharacterEmotion: 0
+    Text: 
+    Background: <same>
+    Choices:
+    - Text: Continue
+      NextDialogueId: 5
+    Field: 
+    Value: 10
+    SetOrChange: 1
+  - id: 5
+    PosInEditor: {x: 164, y: 386}
+    Type: 0
+    Character: Lili
+    CharacterEmotion: 0
+    Text: Add happiness?
+    Background: <same>
+    Choices:
+    - Text: Yes
+      NextDialogueId: 6
+    - Text: No
+      NextDialogueId: 7
+    - Text: Dont change
+      NextDialogueId: 8
+    Field: 
+    Value: 0
+    SetOrChange: 1
+  - id: 6
+    PosInEditor: {x: 465, y: 362}
+    Type: 1
+    Character: 
+    CharacterEmotion: 0
+    Text: 
+    Background: <same>
+    Choices:
+    - Text: Continue
+      NextDialogueId: 8
+    Field: hapiness
+    Value: 5
+    SetOrChange: 0
+  - id: 7
+    PosInEditor: {x: 465, y: 506}
+    Type: 1
+    Character: 
+    CharacterEmotion: 0
+    Text: 
+    Background: <same>
+    Choices:
+    - Text: Continue
+      NextDialogueId: 8
+    Field: hapiness
+    Value: -5
+    SetOrChange: 0
+  - id: 8
+    PosInEditor: {x: 785, y: 544}
+    Type: 2
+    Character: 
+    CharacterEmotion: 0
+    Text: 
+    Background: <same>
+    Choices: []
+    Field: 
+    Value: 0
+    SetOrChange: 1

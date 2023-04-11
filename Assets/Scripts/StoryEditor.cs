@@ -14,8 +14,7 @@ public class StoryEditor : EditorWindow
     private int _maxIndex = 0;
     private string[] Characters = null;
     private string[] Backgrounds = null;
-    private string[] Emotions = Enum.GetNames(typeof(Emotions));
-    private string[] Types = Enum.GetNames(typeof(DialogueType));
+    private string[] Field = null;
     private Vector2 Offset { get => _offset; }
 
     private Vector2 _drag = Vector2.zero;
@@ -30,45 +29,48 @@ public class StoryEditor : EditorWindow
         _data = data;
         _nodes = new List<DialogNode>();
         _dialogues = _data.Dialogues.Select(d => d.Clone()).ToList();
-        var dialogs = _dialogues.ToDictionary(i => i.id);
         Characters = _data.Characters.Select(ch => ch.Name).Append("").ToArray();
         Backgrounds = _data.BackgroundImages.Select(i => i.Name).Append(BackgroundImage.Same).ToArray();
+        Field = _data.Fields.Prepend("").ToArray();
 
         _maxIndex = 0;
         _drag = Vector2.zero;
         _offset = Vector2.zero;
         _zoom = 1;
 
-        if (!dialogs.TryGetValue(0, out var firstDialog))
-		{
-            firstDialog = new Dialogue();
-            _dialogues.Add(firstDialog);
-        }
-        CreateNodes(dialogs, firstDialog);
+        CreateNodes();
     }
 
-    private DialogNode CreateNodes(Dictionary<int, Dialogue> dialogs, Dialogue dialogue)
+    private void CreateNodes()
 	{
-        if (dialogue.id > _maxIndex)
-            _maxIndex = dialogue.id;
-
-        var node = new DialogNode(dialogue, this);
-        _nodes.Add(node);
-
-        var nextNodes = new List<DialogNode>();
-        foreach (var choice in dialogue.Choices)
+        if (!_dialogues.Any(d => d.id == 0))
 		{
-            if (dialogs.TryGetValue(choice.NextDialogueId, out var dialog))
-			{
-                var alreadyCreated = _nodes.Find(node => node.Dialog.id == choice.NextDialogueId);
-                if (alreadyCreated == null)
-                    nextNodes.Add(CreateNodes(dialogs, dialog));
-                else
-                    nextNodes.Add(alreadyCreated);
-			}
+            _dialogues.Add(new Dialogue());
         }
-        node.Next = nextNodes;
-        return node;
+
+        var nodes = new Dictionary<int, DialogNode>();
+		foreach (var dialogue in _dialogues)
+        {
+            if (dialogue.id > _maxIndex)
+                _maxIndex = dialogue.id;
+
+            var node = new DialogNode(dialogue, this);
+            _nodes.Add(node);
+            nodes[dialogue.id] = node;
+        }
+
+        foreach (var node in _nodes)
+        {
+            var nextNodes = new List<DialogNode>();
+            foreach (var choice in node.Dialog.Choices)
+            {
+                if (nodes.TryGetValue(choice.NextDialogueId, out var dialog))
+                    nextNodes.Add(dialog);
+                else
+                    choice.NextDialogueId = -1;
+            }
+            node.Next = nextNodes;
+        }
     }
 
     [MenuItem("Assets/Edit StoryData")]
@@ -80,7 +82,14 @@ public class StoryEditor : EditorWindow
     }
 
     private void OnGUI()
-	{
+    {
+        GUILayout.BeginArea(new Rect(4, 4, 64, 24));
+        if (GUILayout.Button("Save"))
+        {
+            SaveChanges();
+        }
+        GUILayout.EndArea();
+
         hasUnsavedChanges = true;
         var mouseEventProcessed = false;
         for (int i = 0; i < _nodes.Count; i++)
@@ -97,10 +106,7 @@ public class StoryEditor : EditorWindow
         }
 
         GUILayout.BeginArea(new Rect(4, 4, 64, 24));
-        if (GUILayout.Button("Save"))
-        {
-            SaveChanges();
-        }
+        GUILayout.Button("Save");
         GUILayout.EndArea();
 
         GUILayout.BeginArea(new Rect(Screen.width - 100, 4, 96, 24));
@@ -154,7 +160,7 @@ public class StoryEditor : EditorWindow
         {
             PosInEditor = new Vector2(
                 dialogNode.Rect.xMax + 8, 
-                dialogNode.Position.y + (DialogNode.OptionHeight + DialogNode.Height - 60) * dialogNode.Next.Count),
+                dialogNode.Position.y + (dialogNode.OptionHeight + dialogNode.Height - 60) * dialogNode.Next.Count),
             id = ++_maxIndex
         };
         _dialogues.Add(newDialog);
@@ -219,10 +225,13 @@ public class StoryEditor : EditorWindow
     private class DialogNode
 	{
         private static readonly int _width = 250;
-        public static readonly int Height = 210;
+        private static readonly int _heightDialogue = 210;
+        private static readonly int _heightSetter = 120;
+        private static readonly int _heightSwitch = 210;
         private static readonly int _connectionTop = 32;
-        public static readonly int OptionHeight = 52;
         private static readonly int _fontSize = 12;
+        public int OptionHeight { get => Dialog.Type == DialogueType.Setter ? 30 : 52; }
+        public int Height { get => Dialog.Type == DialogueType.Dialogue ? _heightDialogue : Dialog.Type == DialogueType.Setter ? _heightSetter : _heightSwitch; }
         private float _height { get => Height - (_storyEditor._zoom > 1 ? Height * 0f : Height * 0.4f) * (_storyEditor._zoom - 1); }
         private float _optionHeight { get => OptionHeight - (_storyEditor._zoom > 1 ? OptionHeight * 0.02f : OptionHeight * 0.05f) * (_storyEditor._zoom - 1); }
         static private GUIStyle _nodeStyle;
@@ -292,14 +301,23 @@ public class StoryEditor : EditorWindow
             _button.fontSize = Mathf.RoundToInt(_fontSize * _storyEditor._zoom);
             _textArea.fontSize = Mathf.RoundToInt(_fontSize * _storyEditor._zoom);
 
+            var editorGUIUtility_labelWidth = EditorGUIUtility.labelWidth;
             var editorStyles_popup_fontSize = EditorStyles.popup.fontSize;
             var editorStyles_popup_fixedHeight = EditorStyles.popup.fixedHeight;
             var editorStyles_label_fontSize = EditorStyles.label.fontSize;
             var editorStyles_label_fixedHeight = EditorStyles.label.fixedHeight;
+            var editorStyles_textField_fontSize = EditorStyles.textField.fontSize;
+            var editorStyles_textField_fixedHeight = EditorStyles.textField.fixedHeight;
+            var editorStyles_toggle_fontSize = EditorStyles.toggle.fontSize;
+            var editorStyles_toggle_fixedHeight = EditorStyles.toggle.fixedHeight;
             EditorStyles.popup.fontSize = fontSize;
             EditorStyles.popup.fixedHeight = fontSize * 1.5f;
             EditorStyles.label.fontSize = fontSize;
             EditorStyles.label.fixedHeight = fontSize * 1.5f;
+            EditorStyles.textField.fontSize = fontSize;
+            EditorStyles.textField.fixedHeight = fontSize * 1.5f;
+            EditorStyles.toggle.fontSize = fontSize;
+            EditorStyles.toggle.fixedHeight = fontSize * 1.5f;
 
             GUILayout.BeginArea(new Rect(Rect.position + offset, Rect.size), _nodeStyle);
             if (Dialog.id != 0)
@@ -325,43 +343,39 @@ public class StoryEditor : EditorWindow
             EditorGUIUtility.labelWidth = 36 * _storyEditor._zoom;
             
             GUILayout.BeginHorizontal(GUILayout.Width((_width - 35 - 40 - 20) * _storyEditor._zoom));
-            var type = EditorGUILayout.Popup("Type", Array.IndexOf(_storyEditor.Types, Enum.GetName(typeof(DialogueType), Dialog.Type)), _storyEditor.Types, GUILayout.Height(lineHeight));
-            Dialog.Type = Enum.Parse<DialogueType>(_storyEditor.Types[type]);
+            Dialog.Type = (DialogueType)EditorGUILayout.EnumPopup("Type", Dialog.Type, GUILayout.Height(lineHeight));
             GUILayout.EndHorizontal();
 
             GUILayout.EndHorizontal();
             EditorGUIUtility.labelWidth = 80 * _storyEditor._zoom;
 
-            var character = EditorGUILayout.Popup("Character", Array.IndexOf(_storyEditor.Characters, Dialog.Character), _storyEditor.Characters, GUILayout.Height(lineHeight));
-			Dialog.Character = _storyEditor.Characters[character];
+            if (Dialog.Type == DialogueType.Dialogue)
+                DrawDialogue(lineHeight);
+            else if (Dialog.Type == DialogueType.Setter)
+                DrawSetter(lineHeight);
+            else if (Dialog.Type == DialogueType.Switch)
+                DrawSwitch(lineHeight);
 
-            var emotion = EditorGUILayout.Popup("Emotion", Array.IndexOf(_storyEditor.Emotions, Enum.GetName(typeof(Emotions), Dialog.CharacterEmotion)), _storyEditor.Emotions, GUILayout.Height(lineHeight));
-            Dialog.CharacterEmotion = Enum.Parse<Emotions>(_storyEditor.Emotions[emotion]);
-
-            EditorStyles.textField.wordWrap = true;
-            Dialog.Text = EditorGUILayout.TextArea(Dialog.Text, _textArea, GUILayout.Height(50 * _storyEditor._zoom));
-
-            var background = EditorGUILayout.Popup("Background", Array.IndexOf(_storyEditor.Backgrounds, Dialog.Background), _storyEditor.Backgrounds, GUILayout.Height(lineHeight));
-            Dialog.Background = _storyEditor.Backgrounds[background];
-            
-            EditorGUILayout.LabelField($"Choices:", GUILayout.Height(lineHeight));
-            if (GUILayout.Button("Add", _button))
-            {
-                _storyEditor.AddChoice(this);
-            }
-
-            for (int i = 0; i < Dialog.Choices.Count; i++)
+            if (Dialog.Type != DialogueType.Setter)
 			{
-                var choice = Dialog.Choices[i];
-                choice.Text = EditorGUILayout.TextArea(choice.Text, _textArea, GUILayout.Height(50 * _storyEditor._zoom));
-            }
+                for (int i = 0; i < Dialog.Choices.Count; i++)
+			    {
+                    var choice = Dialog.Choices[i];
+                    choice.Text = EditorGUILayout.TextArea(choice.Text, _textArea, GUILayout.Height(50 * _storyEditor._zoom));
+                }
+			}
             GUILayout.EndVertical();
             GUILayout.EndArea();
 
+            EditorGUIUtility.labelWidth = editorGUIUtility_labelWidth;
             EditorStyles.popup.fontSize = editorStyles_popup_fontSize;
             EditorStyles.popup.fixedHeight = editorStyles_popup_fixedHeight;
             EditorStyles.label.fontSize = editorStyles_label_fontSize;
             EditorStyles.label.fixedHeight = editorStyles_label_fixedHeight;
+            EditorStyles.textField.fontSize = editorStyles_textField_fontSize;
+            EditorStyles.textField.fixedHeight = editorStyles_textField_fixedHeight;
+            EditorStyles.toggle.fontSize = editorStyles_toggle_fontSize;
+            EditorStyles.toggle.fixedHeight = editorStyles_toggle_fixedHeight;
 
             if (mouseEventProcessed) return false;
 
@@ -388,6 +402,46 @@ public class StoryEditor : EditorWindow
             }
             return false;
         }
+
+        public void DrawDialogue(float lineHeight)
+		{
+            var character = EditorGUILayout.Popup("Character", Array.IndexOf(_storyEditor.Characters, Dialog.Character), _storyEditor.Characters, GUILayout.Height(lineHeight));
+            Dialog.Character = _storyEditor.Characters[character];
+
+            Dialog.CharacterEmotion = (Emotions)EditorGUILayout.EnumPopup("Emotion", Dialog.CharacterEmotion, GUILayout.Height(lineHeight));
+
+            EditorStyles.textField.wordWrap = true;
+            Dialog.Text = EditorGUILayout.TextArea(Dialog.Text, _textArea, GUILayout.Height(50 * _storyEditor._zoom));
+
+            var background = EditorGUILayout.Popup("Background", Array.IndexOf(_storyEditor.Backgrounds, Dialog.Background), _storyEditor.Backgrounds, GUILayout.Height(lineHeight));
+            Dialog.Background = _storyEditor.Backgrounds[background];
+
+            EditorGUILayout.LabelField($"Choices:", GUILayout.Height(lineHeight));
+
+            if (GUILayout.Button("Add", _button))
+            {
+                _storyEditor.AddChoice(this);
+            }
+        }
+        
+        public void DrawSetter(float lineHeight)
+        {
+            var field = EditorGUILayout.Popup("Field", Array.IndexOf(_storyEditor.Field, Dialog.Field), _storyEditor.Field, GUILayout.Height(lineHeight));
+            field = Mathf.Clamp(field, 0, _storyEditor.Field.Length);
+            Dialog.Field = _storyEditor.Field[field];
+            Dialog.Value = EditorGUILayout.IntField("Value", Dialog.Value, GUILayout.Height(lineHeight));
+            EditorGUIUtility.labelWidth = _width * _storyEditor._zoom - 48;
+            Dialog.SetOrChange = EditorGUILayout.Toggle("Set this value (add otherwise)", Dialog.SetOrChange, GUILayout.Height(lineHeight));
+
+            if (Next.Count == 0)
+                _storyEditor.AddChoice(this);
+        }
+
+        public void DrawSwitch(float lineHeight)
+        {
+
+        }
+
         public void DrawConnections(Vector2 offset)
         {
             for (int i = 0; i < Dialog.Choices.Count; i++)
