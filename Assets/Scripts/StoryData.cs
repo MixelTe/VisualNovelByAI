@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "New StoryData", menuName = "StoryData")]
 public class StoryData : ScriptableObject
 {
     [SerializeField] private List<Character> characters;
     [SerializeField] private List<BackgroundImage> backgroundImages;
-    [SerializeField] private List<Dialogue> dialogues;
+    [FormerlySerializedAs("dialogues")]
+    public List<Dialogue> Dialogues;
 
     public List<Character> Characters => characters;
     public List<BackgroundImage> BackgroundImages => backgroundImages;
-    public List<Dialogue> Dialogues => dialogues;
 }
 
 

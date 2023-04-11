@@ -9,6 +9,7 @@ using UnityEngine;
 public class StoryEditor : EditorWindow
 {
     private StoryData _data;
+    private List<Dialogue> _dialogues;
     private List<DialogNode> _nodes = new();
     private int _maxIndex = 0;
     public string[] Characters = null;
@@ -24,7 +25,8 @@ public class StoryEditor : EditorWindow
 	{
         _data = data;
         _nodes = new List<DialogNode>();
-        var dialogs = _data.Dialogues.ToDictionary(i => i.id);
+        _dialogues = _data.Dialogues.Select(d => d.Clone()).ToList();
+        var dialogs = _dialogues.ToDictionary(i => i.id);
         Characters = _data.Characters.Select(ch => ch.Name).Append("").ToArray();
         Backgrounds = _data.BackgroundImages.Select(i => i.Name).Append(BackgroundImage.Same).ToArray();
 
@@ -36,7 +38,7 @@ public class StoryEditor : EditorWindow
         if (!dialogs.TryGetValue(0, out var firstDialog))
 		{
             firstDialog = new Dialogue();
-            _data.Dialogues.Add(firstDialog);
+            _dialogues.Add(firstDialog);
         }
         CreateNodes(dialogs, firstDialog);
     }
@@ -75,8 +77,9 @@ public class StoryEditor : EditorWindow
 
     private void OnGUI()
 	{
+        hasUnsavedChanges = true;
         var mouseEventProcessed = false;
-		for (int i = 0; i < _nodes.Count; i++)
+        for (int i = 0; i < _nodes.Count; i++)
         {
 			mouseEventProcessed = _nodes[i].Draw(_offset, mouseEventProcessed) || mouseEventProcessed;
         }
@@ -91,7 +94,9 @@ public class StoryEditor : EditorWindow
 
         GUILayout.BeginArea(new Rect(4, 4, 64, 24));
         if (GUILayout.Button("Save"))
-            EditorUtility.SetDirty(_data);
+        {
+            SaveChanges();
+        }
         GUILayout.EndArea();
 
         GUILayout.BeginArea(new Rect(Screen.width - 100, 4, 96, 24));
@@ -138,7 +143,7 @@ public class StoryEditor : EditorWindow
                 dialogNode.Position.y + (DialogNode.OptionHeight + DialogNode.Height - 60) * dialogNode.Next.Count),
             id = ++_maxIndex
         };
-        _data.Dialogues.Add(newDialog);
+        _dialogues.Add(newDialog);
         dialogNode.Dialog.Choices.Add(new Choice()
         {
             NextDialogueId = newDialog.id,
@@ -153,7 +158,7 @@ public class StoryEditor : EditorWindow
     private void DeleteNode(DialogNode node)
 	{
         _nodes.Remove(node);
-        _data.Dialogues.Remove(node.Dialog);
+        _dialogues.Remove(node.Dialog);
 		foreach (var n in _nodes)
 		{
 			for (int i = n.Next.Count - 1; i >= 0; i--)
@@ -167,6 +172,20 @@ public class StoryEditor : EditorWindow
             }
         }
         Repaint();
+    }
+
+    public override void SaveChanges()
+    {
+        _data.Dialogues = _dialogues.Select(d => d.Clone()).ToList();
+        EditorUtility.SetDirty(_data);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        base.SaveChanges();
+    }
+
+    public override void DiscardChanges()
+    {
+        base.DiscardChanges();
     }
 
     private class DialogNode

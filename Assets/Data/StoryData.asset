@@ -28,7 +28,7 @@ MonoBehaviour:
     Image: {fileID: 21300000, guid: 14ee11d3d83b1d6409d3bcf7d2d87a59, type: 3}
   - Name: Sunrise
     Image: {fileID: 21300000, guid: 2d74e1957a306d149b772aa3086ef21c, type: 3}
-  dialogues:
+  Dialogues:
   - id: 0
     PosInEditor: {x: -594, y: -57}
     Character: Lili
